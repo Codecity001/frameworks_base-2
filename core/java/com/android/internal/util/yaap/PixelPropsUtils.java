@@ -113,6 +113,18 @@ public final class PixelPropsUtils {
         propsToKeep = new HashMap<>(tMap);
     }
 
+    private static final HashSet<String> marlinPackagesToChange = new HashSet<>(Set.of(
+        "com.google.android.apps.photos",
+        "com.samsung.accessory.berrymgr",
+        "com.samsung.accessory.fridaymgr",
+        "com.samsung.accessory.neobeanmg",
+        "com.samsung.android.app.watchma",
+        "com.samsung.android.gearnplugin",
+        "com.samsung.android.modenplugin",
+        "com.samsung.android.neatplugin",
+        "com.samsung.android.waterplugin"
+    ));
+
     private static final HashSet<String> extraPackagesToChange = new HashSet<>(Set.of(
         "com.breel.wallpapers20"
     ));
@@ -128,7 +140,10 @@ public final class PixelPropsUtils {
         if (packageName == null) return;
         if (isLoggable()) Log.d(TAG, "Package = " + packageName);
         sIsFinsky = packageName.equals(PACKAGE_FINSKY);
-        if (packageName.equals(PACKAGE_GMS)) {
+        if (marlinPackagesToChange.contains(packageName)) {
+            commonProps.forEach(PixelPropsUtils::setPropValue);
+            marlinProps.forEach(PixelPropsUtils::setPropValue);
+        } else if (packageName.equals(PACKAGE_GMS)) {
             final String procName = Application.getProcessName();
             final boolean isUnstable = PROCESS_GMS_UNSTABLE.equals(procName);
             final boolean isPersistent = !isUnstable && PROCESS_GMS_PERSISTENT.equals(procName);
